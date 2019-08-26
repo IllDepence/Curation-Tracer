@@ -4,7 +4,7 @@
 * create virtual environment: `$ python3 -m venv venv`
 * activate virtual environment: `$ source venv/bin/activate`
 * install requirements: `$ pip install -r requirements.txt`
-* create file `activity_streams.list` (see example)
+* create file `config.ini` (see example file `config.ini.dist`)
 * run `$ python3 crawler.py`
 
 ##### PostGIS setup notes

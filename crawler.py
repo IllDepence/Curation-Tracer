@@ -7,6 +7,7 @@ from sqlalchemy import text as sqla_text
 from sqlalchemy import create_engine
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+from config import Cfg
 
 
 def requests_retry_session(retries=5, backoff_factor=0.2,
@@ -289,11 +290,11 @@ def crawl_single(as_url, db_engine):
         # bar
 
 
-def db_setup():
+def db_setup(uri):
     """ Setup DB
     """
 
-    db_engine = create_engine('postgresql+psycopg2://curba:curbacurba@localhost:5432/curba')
+    db_engine = create_engine(uri)
 
     create_canvases_table = '''
         CREATE TABLE IF NOT EXISTS canvases (
@@ -331,8 +332,9 @@ def log(msg):
     """ Write a log message.
     """
 
+    cfg = Cfg()
     timestamp = str(datetime.datetime.now()).split('.')[0]
-    fn = 'log.txt'  # get from config if config file handling is implemented
+    fn = cfg.cfg['log_file']
     # make /dev/stdout usable as log file
     # https://www.bugs.python.org/issue27805
     # side note: stat.S_ISCHR(os.stat(fn).st_mode) doesn't seem to work in an
@@ -363,15 +365,8 @@ def crawl(activity_stream_urls, db_engine):
 
 if __name__ == '__main__':
 
-    as_file = 'activity_streams.list'
-    if not os.path.exists(as_file):
-        print('Can\'t find file "", exiting.'.format(as_file))
-        sys.exit()
-    activity_stream_urls = []
-    with open(as_file) as f:
-        for line in f:
-            activity_stream_urls.append(line.strip())
-
-    db_engine = db_setup()
+    cfg = Cfg()
+    activity_stream_urls = cfg.cfg['activity_stream_list']
+    db_engine = db_setup(cfg.cfg['db_uri'])
 
     crawl(activity_stream_urls, db_engine)

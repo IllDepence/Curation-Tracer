@@ -1,3 +1,4 @@
-venv
-activity_streams.list
+__pycache__
+config.ini
 log.txt
+venv

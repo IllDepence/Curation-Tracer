@@ -1,0 +1,5 @@
+[environment]
+db_uri = postgresql+psycopg2://curba:curbacurba@localhost:5432/curba
+log_file = log.txt
+activity_stream_list = http://localhost:5000/as/collection.json,
+                       http://localhost:5001/as/collection.json
