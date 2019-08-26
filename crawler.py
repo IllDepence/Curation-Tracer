@@ -141,15 +141,35 @@ def index_curation_element(cur_id, can_id, manifest_id, xywh, db_engine):
     db_engine.execute(q)
 
 
-def process_curation_delete(cp_map, activity):
+def deintex_curation(cur_uri, db_engine):
+    # get Curation DB ID
+    s_cur = sqla_text('''
+        SELECT id
+        FROM curations
+        WHERE jsonld_id=:cid''')
+    cur_db_id = db_engine.execute(s_cur, cid=cur_uri).fetchone()
+    if cur_db_id:
+        cur_db_id = cur_db_id[0]
+        # delete Curation elements ("cutouts")
+        d_cel = sqla_text('''
+            DELETE FROM curation_elements
+            WHERE curation_id=:cdbid''')
+        db_engine.execute(d_cel, cdbid=cur_db_id)
+        # delete Curation
+        d_cur = sqla_text('''
+            DELETE FROM curations
+            WHERE jsonld_id=:jid''')
+        db_engine.execute(d_cur, jid=cur_uri)
+        # TODO delete orphaned Canvases
+
+
+def process_curation_delete(activity, db_engine):
     """ Process a delete activity that has a cr:Curation as its object.
     """
 
     log(('Deletion triggered through activity {}').format(activity['id']))
-    # TODO
-    # delete Curation
-    # delete orphaned Canvases
-    # delete connected curation elements
+    cur_uri = get_attrib_uri(activity, 'object')
+    deintex_curation(cur_uri, db_engine)
 
 
 def crawl_single(as_url, db_engine):
@@ -168,11 +188,11 @@ def crawl_single(as_url, db_engine):
         ).fetchone()
 
     if not last_activity_db:
-        last_activity_time = datetime.datetime.fromtimestamp(0)
+        last_activity_time_db = datetime.datetime.fromtimestamp(0)
         log('First time crawling this Activity Stream.')
     else:
-        last_activity_time = dateutil.parser.parse(last_activity_db[0])
-        log('Last cralwed activity at {}.'.format(last_activity_time))
+        last_activity_time_db = dateutil.parser.parse(last_activity_db[0])
+        log('Last cralwed activity at {}.'.format(last_activity_time_db))
 
     log('Retrieving Activity Stream ({})'.format(as_url))
     try:
@@ -201,6 +221,7 @@ def crawl_single(as_url, db_engine):
     #       (Not doing so might lead to for example trying to process a Create
     #       for a document for which a Delete was processed just before.)
     seen_activity_objs = []
+    last_activity_time_as = None
     # for all AS pages
     while True:
         # for all AC items
@@ -212,24 +233,25 @@ def crawl_single(as_url, db_engine):
                                                       activity['id']))
             activity_end_time = dateutil.parser.parse(activity['endTime'])
             # if we haven't seen it yet and it's about a Curation
-            if activity_end_time > last_activity_time and \
+            if activity_end_time > last_activity_time_db and \
                     activity['object']['@type'] == 'cr:Curation' and \
                     activity['object'] not in seen_activity_objs:
+                if last_activity_time_as == None:
+                    # b/c we're going backwards (i.e. from new to old)
+                    last_activity_time_as = activity_end_time
                 new_activity = True
                 if activity['type'] == 'Create':
                     log('Create')
                     new_canvases += process_curation_create(activity, db_engine)
                 elif activity['type'] == 'Update':
                     log('Update')
-                    # TODO
-                    # process_curation_delete(cp_map, activity)
-                    # lo = get_lookup_dict()
-                    # process_curation_create(lo, cp_map, activity)
-                    # TODO: possible to determine new canvases?
+                    log(' ≈Delete')
+                    process_curation_delete(activity, db_engine)
+                    log(' +Create')
+                    new_canvases += process_curation_create(activity, db_engine)
                 elif activity['type'] == 'Delete':
                     log('Delete')
-                    # TODO
-                    # process_curation_delete(cp_map, activity)
+                    process_curation_delete(activity, db_engine)
                 seen_activity_objs.append(activity['object'])
             else:
                 if activity['type'] in ['Create', 'Update', 'Delete']:
@@ -240,6 +262,8 @@ def crawl_single(as_url, db_engine):
             break
         as_ocp = get_referenced(as_ocp, 'prev')
 
+    if last_activity_time_as == None:
+        last_activity_time_as = last_activity_time_db
     # persist crawl log
     if not last_activity_db:
         last_activity_update = sqla_text('''
@@ -254,7 +278,7 @@ def crawl_single(as_url, db_engine):
 
     last_activity_db = db_engine.execute(
         last_activity_update,
-        new_time=activity_end_time.isoformat(),
+        new_time=last_activity_time_as.isoformat(),
         as_url=as_url)
 
     if new_activity:
@@ -269,7 +293,7 @@ def db_setup():
     """ Setup DB
     """
 
-    db_engine = create_engine('postgresql+psycopg2://cures:curescures@localhost:5432/CuReS')
+    db_engine = create_engine('postgresql+psycopg2://curba:curbacurba@localhost:5432/curba')
 
     create_canvases_table = '''
         CREATE TABLE IF NOT EXISTS canvases (
@@ -328,7 +352,7 @@ def crawl(activity_stream_urls, db_engine):
     """
 
     log('- - - - - - - - - - START - - - - - - - - - -')
-    log('Going through {} activity streams.'.format(len(activity_stream_urls)))
+    log('Going through {} activity stream(s).'.format(len(activity_stream_urls)))
 
     # crawl
     for url in activity_stream_urls:

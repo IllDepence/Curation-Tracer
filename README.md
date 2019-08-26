@@ -17,9 +17,9 @@
 # su postgres
 $ psql
 =# create role <username> superuser with login;
-=# create role cures superuser with login;
-=# alter user cures with password 'curescures';
-$ createdb CuReS
-$ psql CuReS
+=# create role curba with login;
+=# alter user curba with password 'curbacurba';
+$ createdb curba
+$ psql curba
 =# create extension postgis;
 ```
