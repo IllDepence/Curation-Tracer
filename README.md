@@ -1,6 +1,6 @@
 ### Setup
 
-* set up PostGIS DB (see [PostGIS Setup](postgis-setup))
+* set up PostGIS DB (see [PostGIS Setup](#postgis-setup))
 * create virtual environment: `$ python3 -m venv venv`
 * activate virtual environment: `$ source venv/bin/activate`
 * install requirements: `$ pip install -r requirements.txt`
