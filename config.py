@@ -25,8 +25,10 @@ class Cfg():
 
     def _get_default_config(self):
         cfg = {}
+        cfg['port'] = 5000
         cfg['db_uri'] = 'postgresql+psycopg2://curba:curbacurba@localhost:5432/curba'
         cfg['log_file'] = 'log.txt'
+        cfg['crawl_interval'] = 6
         cfg['activity_stream_list'] = ['http://localhost:5000/as/collection.json']
         return cfg
 
@@ -43,10 +45,14 @@ class Cfg():
         # Environment
         if 'environment' in cp.sections():
             for (key, val) in cp.items('environment'):
-                if key == 'db_uri':
+                if key == 'port':
+                    cfg['port'] = int(val)
+                elif key == 'db_uri':
                     cfg['db_uri'] = val
                 elif key == 'log_file':
                     cfg['log_file'] = val
+                elif key == 'crawl_interval':
+                    cfg['crawl_interval'] = int(val)
                 elif key == 'activity_stream_list':
                     urls = val.split(',')
                     cfg['activity_stream_list'] = [url.strip() for url in urls]

@@ -1,5 +1,8 @@
 [environment]
+port = 5000
 db_uri = postgresql+psycopg2://curba:curbacurba@localhost:5432/curba
 log_file = log.txt
+; crawl interval in hours
+crawl_interval = 6
 activity_stream_list = http://localhost:5000/as/collection.json,
                        http://localhost:5001/as/collection.json

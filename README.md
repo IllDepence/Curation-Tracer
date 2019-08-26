@@ -1,13 +1,53 @@
-##### Draft
+### Setup
 
-* set up PostGIS DB
+* set up PostGIS DB (see [PostGIS Setup](postgis-setup))
 * create virtual environment: `$ python3 -m venv venv`
 * activate virtual environment: `$ source venv/bin/activate`
 * install requirements: `$ pip install -r requirements.txt`
 * create file `config.ini` (see example file `config.ini.dist`)
-* run `$ python3 crawler.py`
+* run `$ python3 curba.py`
 
-##### PostGIS setup notes
+### Usage
+
+* run `$ python3 curba.py`
+* access as
+    ```
+    <your_host>:<your_port>/?canvas=<url_encoded_canvas_uri>&area_xywh=<x>,<y>,<w>,<h>
+    ```
+* example
+    ```
+    $ curl -X GET \
+           'http://127.0.0.1:5000/?canvas=http%3A%2F%2Fdcollections.lib.keio.ac.jp%2Fsites%2Fdefault%2Ffiles%2Fiiif%2FNRE%2F132X-136-1%2Fpage2&area_xywh=0,0,10000,10000'
+    ```
+* result format example
+    ```
+    HTTP/1.0 200 OK
+
+    {
+      "canvas":<searched_canvas_uri>,
+      "curations_backlinks":
+        {
+          <backlink_curation_uri>:
+              {"areas":
+                  [
+                    <GeoJSON>,
+                    <GeoJSON>,
+                    <GeoJSON>
+                  ]
+              },
+          "<backlink_curation_uri>":
+              {"areas":
+                  [
+                    <GeoJSON>,
+                    ...
+                  ]
+              },
+          ...
+        }
+    }
+    ```
+
+##### PostGIS Setup
 
 ```
 # apt install postgresql-10

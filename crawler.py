@@ -349,9 +349,13 @@ def log(msg):
         f.write('[{}]   {}\n'.format(timestamp, msg))
 
 
-def crawl(activity_stream_urls, db_engine):
+def crawl():
     """ Crawl all the Activity Streams.
     """
+
+    cfg = Cfg()
+    activity_stream_urls = cfg.cfg['activity_stream_list']
+    db_engine = db_setup(cfg.cfg['db_uri'])
 
     log('- - - - - - - - - - START - - - - - - - - - -')
     log('Going through {} activity stream(s).'.format(len(activity_stream_urls)))
@@ -364,9 +368,4 @@ def crawl(activity_stream_urls, db_engine):
 
 
 if __name__ == '__main__':
-
-    cfg = Cfg()
-    activity_stream_urls = cfg.cfg['activity_stream_list']
-    db_engine = db_setup(cfg.cfg['db_uri'])
-
-    crawl(activity_stream_urls, db_engine)
+    crawl()
