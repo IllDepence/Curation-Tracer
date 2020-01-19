@@ -49,6 +49,8 @@
 
 ##### PostGIS Setup
 
+Example for Ubuntu 18.04
+
 ```
 # apt install postgresql-10
 # apt install postgresql-10-postgis-2.4

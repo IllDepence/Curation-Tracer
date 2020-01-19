@@ -27,10 +27,9 @@ app = Flask(__name__)
 def index():
     canvas_uri_raw = request.args.get('canvas')
     area_xywh = request.args.get('area_xywh')
-    if not (canvas_uri_raw and area_xywh):
+    if not canvas_uri_raw:
         return abort(400)
     canvas_uri = urllib.parse.unquote(canvas_uri_raw)
-    x, y, w, h = [int(elem) for elem in area_xywh.split(',')]
 
     cfg = Cfg()
     db_engine = create_engine(cfg.cfg['db_uri'])
@@ -53,26 +52,27 @@ def index():
         else:
             print('multiple canvases w/ same ID (!!!)')  # FIXME problem
 
-    poly = ('ST_GeomFromText('
-        '\'POLYGON(({} {}, {} {}, {} {}, {} {}, {} {}))\')').format(
-        x, y,
-        x+w, y,
-        x+w, y+h,
-        x, y+h,
-        x, y
-        )
+    area_query_insert = ''
+    if area_xywh:
+        x, y, w, h = [int(elem) for elem in area_xywh.split(',')]
+        poly = ('ST_GeomFromText('
+            '\'POLYGON(({} {}, {} {}, {} {}, {} {}, {} {}))\')').format(
+            x, y,
+            x+w, y,
+            x+w, y+h,
+            x, y+h,
+            x, y
+            )
+        area_query_insert = 'ST_Within(area, {}) and '.format(poly)
     q_area = '''SELECT curations.jsonld_id as uri, areajson
         FROM curations
         JOIN
             (SELECT curation_id, ST_AsGeoJSON(area) as areajson
             FROM curation_elements
-            WHERE ST_Within(area, {}) and canvas_id = {}) as cue
+            WHERE {} canvas_id = {}) as cue
         ON curations.id = cue.curation_id;
-        '''.format(poly, can_db_id)
-    cur_uris = db_engine.execute(
-        q_area,
-        can_uri=canvas_uri
-        ).fetchall()
+        '''.format(area_query_insert, can_db_id)
+    cur_uris = db_engine.execute(q_area).fetchall()
 
     backlinks = {}
     for row in cur_uris:
