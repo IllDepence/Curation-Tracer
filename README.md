@@ -16,36 +16,12 @@
     ```
 * example
     ```
-    $ curl -X GET \
-           'http://127.0.0.1:5000/?canvas=http%3A%2F%2Fdcollections.lib.keio.ac.jp%2Fsites%2Fdefault%2Ffiles%2Fiiif%2FNRE%2F132X-136-1%2Fpage2&area_xywh=0,0,10000,10000'
+    $ curl -X GET 'http://127.0.0.1:5000/?canvas=http%3A%2F%2Fdcollections.lib.keio.ac.jp%2Fsites%2Fdefault%2Ffiles%2Fiiif%2FNRE%2F132X-136-1%2Fpage2&area_xywh=0,0,10000,10000'
     ```
-* result format example
-    ```
-    HTTP/1.0 200 OK
-
-    {
-      "canvas":<searched_canvas_uri>,
-      "curations_backlinks":
-        {
-          <backlink_curation_uri>:
-              {"areas":
-                  [
-                    <GeoJSON>,
-                    <GeoJSON>,
-                    <GeoJSON>
-                  ]
-              },
-          "<backlink_curation_uri>":
-              {"areas":
-                  [
-                    <GeoJSON>,
-                    ...
-                  ]
-              },
-          ...
-        }
-    }
-    ```
+* response format
+    * a [IIIF Curation](http://codh.rois.ac.jp/iiif/curation/) that
+        * contains the queried canvas
+        * annotated with the backlinks that resulted from the query
 
 ##### PostGIS Setup
 

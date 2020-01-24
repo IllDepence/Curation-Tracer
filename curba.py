@@ -32,6 +32,10 @@ def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
         curation backlinks.
     """
 
+    backlink_prefix = ('http://codh.rois.ac.jp/software/iiif-curation-viewer/'
+                       'demo/?curation=')
+    use_prefix = False
+
     cur = OrderedDict()
     cur['@context'] = ['http://iiif.io/api/presentation/2/context.json',
                        ('http://codh.rois.ac.jp/iiif/curation/1/context.js'
@@ -54,7 +58,7 @@ def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
     for xywh, uris in backlinks.items():
         # For every area
         mtd = OrderedDict()
-        mtd['label'] = 'Curation Backlinks for {}'.format(canvas_uri)
+        mtd['label'] = 'Annotation'
         mtd['value'] = []
         for uri in uris:
             # For every backlink to a curation
@@ -62,13 +66,19 @@ def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
             ann['@id'] = 'http://example.org/iiif/annotation/{}'.format(uuid.uuid1())
             ann['@type'] = 'oa:Annotation'
             ann['motivation'] = 'sc:painting'
+            ann['on'] = '{}#xywh={}'.format(canvas_uri, xywh)
             ann['resource'] = OrderedDict()
             ann['resource']['@type'] = 'cnt:ContentAsText'
             ann['resource']['format'] = 'text/html'
+            backlink_uri = uri
+            if use_prefix:
+                backlink_uri = '{}{}'.format(
+                    backlink_prefix,
+                    urllib.parse.quote(uri)
+                    )
+            ann['resource']['chars'] = '<a href="{}">Curation</a>'.format(backlink_uri)
             ann['resource']['marker'] = OrderedDict()
             ann['resource']['marker']['border-color'] = '#0f0'
-            ann['resource']['marker']['chars'] = '<a href="{}">Curation</a>'.format(uri)
-            ann['on'] = '{}#xywh={}'.format(canvas_uri, xywh)
             mtd['value'].append(copy.deepcopy(ann))
         mem['metadata'].append(copy.deepcopy(mtd))
     sel['members'].append(copy.deepcopy(mem))
