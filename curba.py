@@ -27,7 +27,9 @@ atexit.register(lambda: scheduler.shutdown())
 app = Flask(__name__)
 
 
-def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
+def build_curba_curation(
+    canvas_uri, containing_manifest_uri, backlinks, query_url, base_url
+    ):
     """ Build a curation containing a single canvas that is annotated with
         curation backlinks.
     """
@@ -36,17 +38,20 @@ def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
                        'demo/?curation=')
     use_prefix = False
 
+    if base_url[-1] == '/':
+        base_url = base_url[:-1]
+
     cur = OrderedDict()
     cur['@context'] = ['http://iiif.io/api/presentation/2/context.json',
                        ('http://codh.rois.ac.jp/iiif/curation/1/context.js'
                         'on')]
     cur['@type'] = 'cr:Curation'
-    cur['@id'] = 'http://example.org/iiif/curation/{}'.format(uuid.uuid1())
+    cur['@id'] = query_url
     cur['viewingHint'] = 'annotation'
     cur['label'] = 'Curation Backlinks for {}'.format(canvas_uri)
     cur['selections'] = []
     sel = OrderedDict()
-    sel['@id'] = 'http://example.org/iiif/range/{}'.format(uuid.uuid1())
+    sel['@id'] = '{}/tmp/range/{}'.format(base_url, uuid.uuid1())
     sel['@type'] = 'sc:Range'
     sel['label'] = 'Temporary range for displaying a canvas'
     sel['members'] = []
@@ -63,7 +68,7 @@ def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
         for uri in uris:
             # For every backlink to a curation
             ann = OrderedDict()
-            ann['@id'] = 'http://example.org/iiif/annotation/{}'.format(uuid.uuid1())
+            ann['@id'] = '{}/tmp/annotation/{}'.format(base_url, uuid.uuid1())
             ann['@type'] = 'oa:Annotation'
             ann['motivation'] = 'sc:painting'
             ann['on'] = '{}#xywh={}'.format(canvas_uri, xywh)
@@ -76,7 +81,8 @@ def build_curba_curation(canvas_uri, containing_manifest_uri, backlinks):
                     backlink_prefix,
                     urllib.parse.quote(uri)
                     )
-            ann['resource']['chars'] = '<a href="{}">Curation</a>'.format(backlink_uri)
+            ann['resource']['chars'] = '<a href="{}">Curation</a>'.format(
+                backlink_uri)
             ann['resource']['marker'] = OrderedDict()
             ann['resource']['marker']['border-color'] = '#0f0'
             mtd['value'].append(copy.deepcopy(ann))
@@ -164,7 +170,12 @@ def index():
         if xywh not in backlinks_by_area:
             backlinks_by_area[xywh] = []
         backlinks_by_area[xywh].append(uri)
-    display_curation = build_curba_curation(canvas_uri, can_db_man_jsonld_id, backlinks_by_area)
+    display_curation = build_curba_curation(
+        canvas_uri,
+        can_db_man_jsonld_id,
+        backlinks_by_area,
+        request.url,
+        request.base_url)
 
     # ret = {
     #     'canvas': canvas_uri,
