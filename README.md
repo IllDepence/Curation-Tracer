@@ -5,11 +5,11 @@
 * activate virtual environment: `$ source venv/bin/activate`
 * install requirements: `$ pip install -r requirements.txt`
 * create file `config.ini` (see example file `config.ini.dist`)
-* run `$ python3 curba.py`
+* run `$ python3 tracer.py`
 
 ### Usage
 
-* run `$ python3 curba.py`
+* run `$ python3 tracer.py`
 * access as
     ```
     <your_host>:<your_port>/?canvas=<url_encoded_canvas_uri>&area_xywh=<x>,<y>,<w>,<h>
@@ -35,9 +35,9 @@ Example for Ubuntu 18.04
 # su postgres
 $ psql
 =# create role <username> superuser with login;
-=# create role curba with login;
-=# alter user curba with password 'curbacurba';
-$ createdb curba
-$ psql curba
+=# create role tracer with login;
+=# alter user tracer with password 'tracertracer';
+$ createdb tracer
+$ psql tracer
 =# create extension postgis;
 ```

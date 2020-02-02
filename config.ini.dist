@@ -1,6 +1,6 @@
 [environment]
 port = 5000
-db_uri = postgresql+psycopg2://curba:curbacurba@localhost:5432/curba
+db_uri = postgresql+psycopg2://tracer:tracertracer@localhost:5432/tracer
 log_file = log.txt
 ; crawl interval in hours
 crawl_interval = 6

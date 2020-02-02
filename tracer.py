@@ -1,3 +1,9 @@
+""" Curation Tracer
+
+    A flask web application for IIIF resource usage analytics with regard to
+    IIIF Curations.
+"""
+
 import atexit
 import copy
 import json
@@ -27,7 +33,7 @@ atexit.register(lambda: scheduler.shutdown())
 app = Flask(__name__)
 
 
-def build_curba_curation(
+def build_annotation_container_curation(
     canvas_uri, containing_manifest_uri, backlinks, query_url, base_url
     ):
     """ Build a curation containing a single canvas that is annotated with
@@ -173,7 +179,7 @@ def index():
         if xywh not in backlinks_by_area:
             backlinks_by_area[xywh] = []
         backlinks_by_area[xywh].append(uri)
-    display_curation = build_curba_curation(
+    display_curation = build_annotation_container_curation(
         canvas_uri,
         can_db_man_jsonld_id,
         backlinks_by_area,

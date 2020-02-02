@@ -26,7 +26,7 @@ class Cfg():
     def _get_default_config(self):
         cfg = {}
         cfg['port'] = 5000
-        cfg['db_uri'] = 'postgresql+psycopg2://curba:curbacurba@localhost:5432/curba'
+        cfg['db_uri'] = 'postgresql+psycopg2://tracer:tracertracer@localhost:5432/tracer'
         cfg['log_file'] = 'log.txt'
         cfg['crawl_interval'] = 6
         cfg['activity_stream_list'] = ['http://localhost:5000/as/collection.json']
