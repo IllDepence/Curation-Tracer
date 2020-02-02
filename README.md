@@ -12,11 +12,11 @@
 * run `$ python3 tracer.py`
 * access as
     ```
-    <your_host>:<your_port>/?canvas=<url_encoded_canvas_uri>&area_xywh=<x>,<y>,<w>,<h>
+    <your_host>:<your_port>/?canvas=<url_encoded_canvas_uri>&xywh=<x>,<y>,<w>,<h>
     ```
 * example
     ```
-    $ curl -X GET 'http://127.0.0.1:5000/?canvas=http%3A%2F%2Fdcollections.lib.keio.ac.jp%2Fsites%2Fdefault%2Ffiles%2Fiiif%2FNRE%2F132X-136-1%2Fpage2&area_xywh=0,0,10000,10000'
+    $ curl -X GET 'http://127.0.0.1:5000/?canvas=http%3A%2F%2Fdcollections.lib.keio.ac.jp%2Fsites%2Fdefault%2Ffiles%2Fiiif%2FNRE%2F132X-136-1%2Fpage2&xywh=0,0,10000,10000'
     ```
 * response format
     * a [IIIF Curation](http://codh.rois.ac.jp/iiif/curation/) that

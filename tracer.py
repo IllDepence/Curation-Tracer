@@ -108,7 +108,7 @@ def build_annotation_container_curation(
 @app.route('/', methods=['GET'])
 def index():
     canvas_uri_raw = request.args.get('canvas')
-    area_xywh = request.args.get('area_xywh')
+    area_xywh = request.args.get('xywh')
     if not canvas_uri_raw:
         return abort(400)
     canvas_uri = urllib.parse.unquote(canvas_uri_raw)
