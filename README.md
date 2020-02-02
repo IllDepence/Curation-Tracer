@@ -23,6 +23,18 @@
         * contains the queried canvas
         * annotated with the backlinks that resulted from the query
 
+##### Using gunicorn
+
+* activate virtual environment: `$ source venv/bin/activate`
+* install gunicorn: `$ pip install gunicorn`
+* start Curation Tracer: `$ gunicorn --bind localhost:5002 tracer:app`
+
+To serve Curation Tracer under a specific path, add argument `-e SCRIPT_NAME='/<path>'` to the gunicorn command.  
+*Example*
+
+* start as: `$ gunicorn --bind localhost:5000 -e SCRIPT_NAME='/curation/tracer' tracer:app`
+* access as: `<your_host>:5000/curation/tracer?canvas=...`
+
 ##### PostGIS Setup
 
 Example for Ubuntu 18.04

@@ -4,8 +4,8 @@ db_uri = postgresql+psycopg2://tracer:tracertracer@localhost:5432/tracer
 log_file = log.txt
 ; crawl interval in hours
 crawl_interval = 6
-activity_stream_list = http://localhost:5000/as/collection.json,
-                       http://localhost:5001/as/collection.json
+activity_stream_list = http://localhost:5001/as/collection.json,
+                       http://localhost:5002/as/collection.json
 [marker]
 ; any key value pair in here will be set for the markers used in annotations
 border-color = #0f0
