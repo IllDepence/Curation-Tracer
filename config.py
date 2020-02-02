@@ -30,6 +30,8 @@ class Cfg():
         cfg['log_file'] = 'log.txt'
         cfg['crawl_interval'] = 6
         cfg['activity_stream_list'] = ['http://localhost:5000/as/collection.json']
+        cfg['marker_settings'] = {}
+        cfg['marker_settings']['border-color'] = '#0f0'
         return cfg
 
 
@@ -59,6 +61,10 @@ class Cfg():
                 else:
                     print('WARNING: unexpected config entry "{}" i'
                           'n section [environment]'.format(key))
+        # Marker
+        if 'marker' in cp.sections():
+            for (key, val) in cp.items('marker'):
+                cfg['marker_settings'][key] = val
 
         if fails:
             fail = '\n'.join(fails)

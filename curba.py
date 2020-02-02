@@ -37,6 +37,8 @@ def build_curba_curation(
     backlink_prefix = ('http://codh.rois.ac.jp/software/iiif-curation-viewer/'
                        'demo/?curation=')
     use_prefix = False
+    cfg = Cfg()
+    marker_settings = cfg.cfg['marker_settings']
 
     if base_url[-1] == '/':
         base_url = base_url[:-1]
@@ -84,7 +86,8 @@ def build_curba_curation(
             ann['resource']['chars'] = '<a href="{}">Curation</a>'.format(
                 backlink_uri)
             ann['resource']['marker'] = OrderedDict()
-            ann['resource']['marker']['border-color'] = '#0f0'
+            for key, val in marker_settings.items():
+                ann['resource']['marker'][key] = val
             mtd['value'].append(copy.deepcopy(ann))
         mem['metadata'].append(copy.deepcopy(mtd))
     sel['members'].append(copy.deepcopy(mem))

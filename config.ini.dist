@@ -6,3 +6,6 @@ log_file = log.txt
 crawl_interval = 6
 activity_stream_list = http://localhost:5000/as/collection.json,
                        http://localhost:5001/as/collection.json
+[marker]
+; any key value pair in here will be set for the markers used in annotations
+border-color = #0f0
