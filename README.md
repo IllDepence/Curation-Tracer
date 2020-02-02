@@ -1,3 +1,7 @@
+![Curation Tracer](logo_500px.png)
+
+A flask web application for IIIF resource usage analytics with regard to IIIF Curations.
+
 ## Setup
 
 * set up PostGIS DB (see [PostGIS Setup](#postgis-setup))
@@ -64,3 +68,11 @@ To serve Curation Tracer under a specific path, add argument `-e SCRIPT_NAME='/<
 
 * start as: `$ gunicorn --bind localhost:5000 -e SCRIPT_NAME='/curation/tracer' tracer:app`
 * access as: `<your_host>:5000/curation/tracer?canvas=...`
+
+## Logo
+The Curation Tracer logo uses image content from [源氏香之図](http://codh.rois.ac.jp/pmjt/book/200014999/) in the [日本古典籍データセット（国文研所蔵）](http://codh.rois.ac.jp/pmjt/book/) provided by the [Center for Open Data in the Humanities](http://codh.rois.ac.jp/), used under [CC-BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/).
+The Curation Tracer logo itself is licensed under [CC-BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) by Tarek Saier. A high resolution version (2870×1125 px) can be downloaded [here](http://moc.sirtetris.com/curation_tracer_logo_full.png).
+
+## Support
+Sponsored by the National Institute of Informatics.  
+Supported by the Center for Open Data in the Humanities, Joint Support-Center for Data Science Research, Research Organization of Information and Systems.
