@@ -33,6 +33,28 @@ atexit.register(lambda: scheduler.shutdown())
 app = Flask(__name__)
 
 
+def query_hash(query_url):
+    """ Generate a compact identifier from a query URL. This idenifier is then
+        used for @ids of Ranges and Annotations.
+
+        IIIF URI pattern:
+            {scheme}://{host}/{prefix}/{identifier}/range/{name}
+            {scheme}://{host}/{prefix}/{identifier}/annotation/{name}
+
+        UUIDs are used for {name} and unique for every Range and Annotation.
+        (Not handled by this function.)
+
+        The return value of this function is used as {identifier} and
+        consistent across one query.
+
+        Example values:
+            query_hash('<tracer_instance>/?canvas=<...>&xywh=<...>')
+            '4adaf0dc94762893'
+    """
+
+    return hex(abs(hash(query_url)))[2:]
+
+
 def build_annotation_container_curation(
     canvas_uri, containing_manifest_uri, backlinks, query_url, base_url
     ):
@@ -42,6 +64,7 @@ def build_annotation_container_curation(
 
     backlink_prefix = ('http://codh.rois.ac.jp/software/iiif-curation-viewer/'
                        'demo/?curation=')
+    q_hash = query_hash(query_url)
     use_prefix = False
     cfg = Cfg()
     marker_settings = cfg.cfg['marker_settings']
@@ -59,7 +82,7 @@ def build_annotation_container_curation(
     cur['label'] = 'Curation Backlinks for {}'.format(canvas_uri)
     cur['selections'] = []
     sel = OrderedDict()
-    sel['@id'] = '{}/tmp/range/{}'.format(base_url, uuid.uuid1())
+    sel['@id'] = '{}/trace/{}/range/{}'.format(base_url, q_hash, uuid.uuid1())
     sel['@type'] = 'sc:Range'
     sel['label'] = 'Temporary range for displaying a canvas'
     sel['members'] = []
@@ -76,7 +99,9 @@ def build_annotation_container_curation(
         for uri in uris:
             # For every backlink to a curation
             ann = OrderedDict()
-            ann['@id'] = '{}/tmp/annotation/{}'.format(base_url, uuid.uuid1())
+            ann['@id'] = '{}/trace/{}/annotation/{}'.format(
+                base_url, q_hash, uuid.uuid1()
+                )
             ann['@type'] = 'oa:Annotation'
             ann['motivation'] = 'sc:painting'
             ann['on'] = '{}#xywh={}'.format(canvas_uri, xywh)
