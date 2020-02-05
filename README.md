@@ -35,19 +35,21 @@ $ psql tracer
 section | key | default | explanation
 ------- | --- | ------- | -----------
 environment | port | 5000 | port on which the endpoint is served
-&zwnj; | db\_uri | postgresql+psycopg2://tracer:<br>tracertracer@localhost:5432/tracer | a [SQLAlchemy database URI](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) to the PostgreSQL DB
+&zwnj; | db\_uri | postgresql+psycopg2://tracer:<br>tracertracer@localhost:5432/tracer | a [SQLAlchemy database URI](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) to the [PostGIS DB](#postgis-setup)
 &zwnj; | log\_file | log.txt | file in which crawler logs are written
 &zwnj; | crawl\_interval | 6 | crawl interval in hours
-&zwnj; | activity\_stream\_list | http://localhost:5000/as/collection.json | comma seperated list of links to [Activity Streams](https://www.w3.org/TR/activitystreams-core/) in form of OrderedCollections
-marker | &lt;key&gt; | &lt;value&gt; | key value pairs that will be set for the markers used in annotations (the only thing set by default is `border-color` with the value `#0f0`)
+&zwnj; | activity\_stream\_list | http://localhost:5000/as/collection.json | comma seperated list of links to [Activity Streams](https://www.w3.org/TR/activitystreams-core/), as provided by e.g. [JSONkeeper](https://github.com/IllDepence/JSONkeeper)
+marker | &lt;key&gt; | &lt;value&gt; | key value pairs that will be set for the [markers](http://codh.rois.ac.jp/software/iiif-curation-viewer/annotation.html#%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC%E3%81%AE%E7%A8%AE%E9%A1%9E) used in annotations (the only thing set by default is `border-color` with the value `#0f0`)
 
 ## Usage
 
 * run `$ python3 tracer.py`
-* access as
+    * Curation Tracer will then crawl the Activity Streams given in `config.ini` (once on startup and then according to the `crawl_interval` setting) for Curations.
+* perform a search
     ```
     <your_host>:<your_port>/?canvas=<url_encoded_canvas_uri>&xywh=<x>,<y>,<w>,<h>
     ```
+    * where you provide a canvas URI (and optionally a region with the canvas)
 * example
     ```
     $ curl -X GET 'http://127.0.0.1:5000/?canvas=http%3A%2F%2Fdcollections.lib.keio.ac.jp%2Fsites%2Fdefault%2Ffiles%2Fiiif%2FNRE%2F132X-136-1%2Fpage2&xywh=0,0,10000,10000'
@@ -55,7 +57,7 @@ marker | &lt;key&gt; | &lt;value&gt; | key value pairs that will be set for the 
 * response format
     * a [IIIF Curation](http://codh.rois.ac.jp/iiif/curation/) that
         * contains the queried canvas
-        * annotated with the backlinks that resulted from the query
+        * [annotated](http://codh.rois.ac.jp/software/iiif-curation-viewer/annotation.html#%E3%82%A2%E3%83%8E%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%A8%E3%82%A2%E3%83%8E%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%93%E3%83%A5%E3%83%BC%E3%83%A2%E3%83%BC%E3%83%89) with the backlinks that resulted from the query
 
 #### Using gunicorn
 
