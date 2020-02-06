@@ -96,30 +96,36 @@ def build_annotation_container_curation(
         mtd = OrderedDict()
         mtd['label'] = 'Annotation'
         mtd['value'] = []
-        for uri in uris:
-            # For every backlink to a curation
-            ann = OrderedDict()
-            ann['@id'] = '{}/trace/{}/annotation/{}'.format(
-                base_url, q_hash, uuid.uuid1()
-                )
-            ann['@type'] = 'oa:Annotation'
-            ann['motivation'] = 'sc:painting'
-            ann['on'] = '{}#xywh={}'.format(canvas_uri, xywh)
-            ann['resource'] = OrderedDict()
-            ann['resource']['@type'] = 'cnt:ContentAsText'
-            ann['resource']['format'] = 'text/html'
+        # Create a single annotation
+        ann = OrderedDict()
+        ann['@id'] = '{}/trace/{}/annotation/{}'.format(
+            base_url, q_hash, uuid.uuid1()
+            )
+        ann['@type'] = 'oa:Annotation'
+        ann['motivation'] = 'sc:painting'
+        ann['on'] = '{}#xywh={}'.format(canvas_uri, xywh)
+        ann['resource'] = OrderedDict()
+        ann['resource']['@type'] = 'cnt:ContentAsText'
+        ann['resource']['format'] = 'text/html'
+        # With a list of all backlinks to curations
+        backlink_list_chars = ''
+        for i, uri in enumerate(uris):
+            if i > 0:
+                backlink_list_chars += ',<br>'
             backlink_uri = uri
             if use_prefix:
                 backlink_uri = '{}{}'.format(
                     backlink_prefix,
                     urllib.parse.quote(uri)
                     )
-            ann['resource']['chars'] = '<a href="{}">Curation</a>'.format(
-                backlink_uri)
-            ann['resource']['marker'] = OrderedDict()
-            for key, val in marker_settings.items():
-                ann['resource']['marker'][key] = val
-            mtd['value'].append(copy.deepcopy(ann))
+            backlink_list_chars += '<a href="{}">Curation {}</a>'.format(
+                backlink_uri, i+1
+                )
+        ann['resource']['chars'] = backlink_list_chars
+        ann['resource']['marker'] = OrderedDict()
+        for key, val in marker_settings.items():
+            ann['resource']['marker'][key] = val
+        mtd['value'].append(copy.deepcopy(ann))
         mem['metadata'].append(copy.deepcopy(mtd))
     sel['members'].append(copy.deepcopy(mem))
     sel['within'] = OrderedDict()
