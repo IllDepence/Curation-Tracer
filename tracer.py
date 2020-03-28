@@ -62,11 +62,13 @@ def build_annotation_container_curation(
         curation backlinks.
     """
 
-    backlink_prefix = ('http://codh.rois.ac.jp/software/iiif-curation-viewer/'
-                       'demo/?curation=')
     q_hash = query_hash(query_url)
-    use_prefix = False
     cfg = Cfg()
+    curation_link_prefix = cfg.cfg['curation_link_prefix']
+    if len(curation_link_prefix) > 0:
+        use_prefix = True
+    else:
+        use_prefix = False
     marker_settings = cfg.cfg['marker_settings']
 
     if base_url[-1] == '/':
@@ -79,7 +81,7 @@ def build_annotation_container_curation(
     cur['@type'] = 'cr:Curation'
     cur['@id'] = query_url
     cur['viewingHint'] = 'annotation'
-    cur['label'] = 'Curation Backlinks for {}'.format(canvas_uri)
+    cur['label'] = 'Tracing Curations for {}'.format(canvas_uri)
     cur['selections'] = []
     sel = OrderedDict()
     sel['@id'] = '{}/trace/{}/range/{}'.format(base_url, q_hash, uuid.uuid1())
@@ -115,7 +117,7 @@ def build_annotation_container_curation(
             backlink_uri = uri
             if use_prefix:
                 backlink_uri = '{}{}'.format(
-                    backlink_prefix,
+                    curation_link_prefix,
                     urllib.parse.quote(uri)
                     )
             backlink_list_chars += '<a href="{}">Curation {}</a>'.format(

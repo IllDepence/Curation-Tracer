@@ -6,6 +6,8 @@ log_file = log.txt
 crawl_interval = 6
 activity_stream_list = http://localhost:5001/as/collection.json,
                        http://localhost:5002/as/collection.json
+; optional prefix for annotated links to curations
+; curation_link_prefix = 
 [marker]
 ; any key value pair in here will be set for the markers used in annotations
 border-color = #0f0

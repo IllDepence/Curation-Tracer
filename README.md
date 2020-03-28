@@ -22,8 +22,8 @@ Example for Ubuntu 18.04
 # apt install postgresql-server-dev-10
 # su postgres
 $ psql
-=# create role <username> superuser with login;
-=# create role tracer with login;
+=# create role <username> superuser login;
+=# create role tracer login;
 =# alter user tracer with password 'tracertracer';
 $ createdb tracer
 $ psql tracer
@@ -37,6 +37,7 @@ section | key | default | explanation
 environment | port | 5000 | port on which the endpoint is served
 &zwnj; | db\_uri | postgresql+psycopg2://tracer:<br>tracertracer@localhost:5432/tracer | a [SQLAlchemy database URI](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) to the [PostGIS DB](#postgis-setup)
 &zwnj; | log\_file | log.txt | file in which crawler logs are written
+&zwnj; | curation\_link\_prefix | `None` | optional prefix for annotated links to curations (e.g. a viewer URL)
 &zwnj; | crawl\_interval | 6 | crawl interval in hours
 &zwnj; | activity\_stream\_list | http://localhost:5000/as/collection.json | comma seperated list of links to [Activity Streams](https://www.w3.org/TR/activitystreams-core/), as provided by e.g. [JSONkeeper](https://github.com/IllDepence/JSONkeeper)
 marker | &lt;key&gt; | &lt;value&gt; | key value pairs that will be set for the [markers](http://codh.rois.ac.jp/software/iiif-curation-viewer/annotation.html#%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC%E3%81%AE%E7%A8%AE%E9%A1%9E) used in annotations (the only thing set by default is `border-color` with the value `#0f0`)

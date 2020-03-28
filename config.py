@@ -30,6 +30,7 @@ class Cfg():
         cfg['log_file'] = 'log.txt'
         cfg['crawl_interval'] = 6
         cfg['activity_stream_list'] = ['http://localhost:5000/as/collection.json']
+        cfg['curation_link_prefix'] = ''
         cfg['marker_settings'] = {}
         cfg['marker_settings']['border-color'] = '#0f0'
         return cfg
@@ -53,6 +54,8 @@ class Cfg():
                     cfg['db_uri'] = val
                 elif key == 'log_file':
                     cfg['log_file'] = val
+                elif key == 'curation_link_prefix':
+                    cfg['curation_link_prefix'] = val
                 elif key == 'crawl_interval':
                     cfg['crawl_interval'] = int(val)
                 elif key == 'activity_stream_list':
