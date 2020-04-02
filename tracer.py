@@ -118,7 +118,7 @@ def build_annotation_container_curation(
             if use_prefix:
                 backlink_uri = '{}{}'.format(
                     curation_link_prefix,
-                    urllib.parse.quote(uri)
+                    uri
                     )
             backlink_list_chars += '<a href="{}">Curation {}</a>'.format(
                 backlink_uri, i+1
