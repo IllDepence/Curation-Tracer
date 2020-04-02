@@ -154,7 +154,6 @@ def index():
         FROM canvases
         WHERE jsonld_id=:can_uri
         ''')
-    print(canvas_uri)
     can_db_tpls = db_engine.execute(
         q_can,
         can_uri=canvas_uri
